@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17181a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png"><link rel="stylesheet" href="solaria.css">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("sol-theme")||"dark")}catch(e){}</script>
+<title>Solaria Parfums | Luxury-inspired fragrances</title><meta name="description" content="Solaria Parfums - luxury-inspired fragrances, made accessible. Delivered across the Philippines."><meta property="og:site_name" content="Solaria Parfums"><meta property="og:title" content="Solaria Parfums | Luxury-inspired fragrances"></head>
+<body data-nav="home"><div id="hdr"></div><main>
+<section style="padding:96px 0 84px;text-align:center;border-bottom:1px solid var(--line)"><div class="wrap center">
+<img class="logo-img" src="logo-emblem.png" alt="" style="width:112px;margin:0 auto 34px">
+<p class="eyebrow">Solaria Parfums</p>
+<h1>Inspired by the icons.<br>Made for you.</h1>
+<div class="rule"></div>
+<p class="muted" style="max-width:520px;margin:0 auto 38px;font-size:15px">Fragrances inspired by the world&rsquo;s most loved perfumes, crafted to be worn every day without the luxury price tag.</p>
+<a class="btn" href="shop.html">Shop the collection</a>
+</div></section>
+<section class="sec"><div class="wrap">
+<div class="center" style="margin-bottom:48px"><p class="eyebrow">Featured</p><h2>The signature edit</h2><div class="rule"></div></div>
+<div class="grid" id="feat"><p class="muted center" style="grid-column:1/-1">Loading&hellip;</p></div>
+<div class="center" style="margin-top:48px"><a class="btn ghost" href="shop.html">View all fragrances</a></div>
+</div></section>
+<section class="sec" style="background:var(--bg2);border-block:1px solid var(--line)"><div class="wrap">
+<div class="center" style="margin-bottom:44px"><p class="eyebrow">Explore by scent</p><h2>Find your family</h2><div class="rule"></div></div>
+<div class="chips" style="justify-content:center" id="fam"></div>
+</div></section>
+<section class="sec"><div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:48px;text-align:center">
+<div><p class="eyebrow">01</p><h3>Inspired by icons</h3><p class="muted">Every Solaria fragrance is inspired by a well-known original, so you always know the scent you are reaching for.</p></div>
+<div><p class="eyebrow">02</p><h3>Luxury, accessible</h3><p class="muted">The experience of a signature scent at a price that makes a full collection possible.</p></div>
+<div><p class="eyebrow">03</p><h3>Delivered to your door</h3><p class="muted">Nationwide delivery across the Philippines, with cash on delivery available.</p></div>
+</div></section>
+</main><div id="ftr"></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script><script src="db.js"></script><script src="cart.js"></script><script src="layout.js"></script><script>
+var FAM=["Fresh","Woody","Floral","Amber","Sweet"];
+document.getElementById("fam").innerHTML=FAM.map(function(f){return '<a class="chip" href="shop.html?family='+f+'">'+f+'</a>'}).join("");
+(async function(){
+  var el=document.getElementById("feat");
+  if(!SOLDB.ok){el.innerHTML='<p class="muted center" style="grid-column:1/-1">Our collection is arriving soon.</p>';return}
+  try{
+    var rows=(await SOLDB.fetchProducts()).filter(function(p){return p.is_featured}).slice(0,4);
+    if(!rows.length)rows=(await SOLDB.fetchProducts()).slice(0,4);
+    el.innerHTML=rows.length?rows.map(SOLCard).join(""):'<p class="muted center" style="grid-column:1/-1">Our collection is arriving soon.</p>';
+  }catch(e){el.innerHTML='<p class="muted center" style="grid-column:1/-1">Could not load the collection right now.</p>'}
+})();
+</script></body></html>
