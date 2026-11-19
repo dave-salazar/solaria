@@ -4,7 +4,7 @@
 // The publishable key is safe in browser code: Row Level Security (solaria-setup.sql) decides who can do what.
 (function(){
   
-  var URL="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxdmhwb25laXBhaXRoa3hyenNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwNTUyOTEsImV4cCI6MjExMDYzMTI5MX0.WJlV-As1Pd6-DT26r6DLZO0EVTZSu3aF67jSI7flqJU";
+  var URL="https://dqvhponeipaithkxrzsq.supabase.co",KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRxdmhwb25laXBhaXRoa3hyenNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwNTUyOTEsImV4cCI6MjExMDYzMTI5MX0.WJlV-As1Pd6-DT26r6DLZO0EVTZSu3aF67jSI7flqJU";
   var client=null,configured=URL.indexOf("http")===0;
   try{if(configured)client=window.supabase.createClient(URL,KEY)}catch(e){console.warn("Supabase not available",e)}
   function here(){return (location.pathname.split("/").pop()||"index.html")+location.search}
