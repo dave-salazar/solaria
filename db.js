@@ -3,7 +3,7 @@
 // >>> PASTE YOUR NEW SOLARIA PROJECT VALUES BELOW (Supabase > Project Settings > API Keys / Data API) <<<
 // The publishable key is safe in browser code: Row Level Security (solaria-setup.sql) decides who can do what.
 (function(){
-  var URL="PASTE_YOUR_PROJECT_URL_HERE",KEY="PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+  var URL="https://dqvhponeipaithkxrzsq.supabase.co/rest/v1/",KEY="sb_publishable_erWPIa3FKCF5ohMV5MoZRQ_iQHX0ErW";
   var client=null,configured=URL.indexOf("http")===0;
   try{if(configured)client=window.supabase.createClient(URL,KEY)}catch(e){console.warn("Supabase not available",e)}
   function here(){return (location.pathname.split("/").pop()||"index.html")+location.search}
