@@ -20,7 +20,39 @@
   function link(p){return "product.html?id="+encodeURIComponent(p.id)}
   var tt;
   function toast(m){var t=document.getElementById("toast");if(!t){t=document.createElement("div");t.id="toast";document.body.appendChild(t)}t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("show")},2200)}
-  window.SOL={esc:esc,peso:peso,bottle:bottle,link:link,toast:toast,contact:CONTACT,
+  var SPECIAL="!@#$%&*";
+  function pwCheck(pw,avoid){
+    pw=String(pw||"");
+    if(pw.length<8)return"Password must be at least 8 characters.";
+    if(/\s/.test(pw))return"Password cannot contain spaces.";
+    if(!/[a-z]/.test(pw))return"Password needs a lowercase letter.";
+    if(!/[A-Z]/.test(pw))return"Password needs an uppercase letter.";
+    if(!/[0-9]/.test(pw))return"Password needs a number.";
+    if(!/[!@#$%&*]/.test(pw))return"Password needs a special character (! @ # $ % & *).";
+    var l=pw.toLowerCase();
+    for(var i=0;i<(avoid||[]).length;i++){var a=String(avoid[i]||"").toLowerCase().trim();if(a&&(l===a||l===a.split("@")[0]))return"Password cannot match your email or username."}
+    return""}
+  function userCheck(u){return /^[a-z0-9_.]{3,20}$/.test(u)?"":"Username: 3-20 characters, lowercase letters, numbers, _ or . only, no spaces."}
+  var CC=[["PH","Philippines","63","XXX XXX XXXX",1,"9"],["US","United States","1","XXX XXX XXXX",0],["CA","Canada","1","XXX XXX XXXX",0],["GB","United Kingdom","44","XXXX XXX XXXX",1],["AU","Australia","61","XXX XXX XXX",1],["NZ","New Zealand","64","XX XXX XXXX",1],["SG","Singapore","65","XXXX XXXX",0],["HK","Hong Kong","852","XXXX XXXX",0],["MY","Malaysia","60","XX XXX XXXX",1],["ID","Indonesia","62","XXX XXXX XXXX",1],["TH","Thailand","66","XX XXX XXXX",1],["VN","Vietnam","84","XXX XXX XXX",1],["JP","Japan","81","XX XXXX XXXX",1],["KR","South Korea","82","XX XXXX XXXX",1],["CN","China","86","XXX XXXX XXXX",0],["IN","India","91","XXXXX XXXXX",0],["AE","United Arab Emirates","971","XX XXX XXXX",1],["SA","Saudi Arabia","966","XX XXX XXXX",1],["QA","Qatar","974","XXXX XXXX",0],["KW","Kuwait","965","XXXX XXXX",0],["DE","Germany","49","XXXX XXXXXXX",1],["FR","France","33","X XX XX XX XX",1],["IT","Italy","39","XXX XXX XXXX",0],["ES","Spain","34","XXX XXX XXX",0]];
+  function ccGet(c){for(var i=0;i<CC.length;i++)if(CC[i][0]===c)return CC[i];return CC[0]}
+  function flag(c){return'<img class="ph-flag" alt="" width="20" height="14" src="https://flagcdn.com/w40/'+c.toLowerCase()+'.png">'}
+  function maskLen(m){return m.replace(/[^X]/g,"").length}
+  function applyMask(d,m){var o="",k=0;for(var i=0;i<m.length&&k<d.length;i++){if(m.charAt(i)==="X")o+=d.charAt(k++);else o+=m.charAt(i)}return o}
+  function cleanDigits(raw,c){var d=String(raw||"").replace(/\D/g,"");if(d.indexOf(c[2])===0&&d.length>maskLen(c[3]))d=d.slice(c[2].length);if(c[4]&&d.charAt(0)==="0")d=d.slice(1);return d.slice(0,maskLen(c[3]))}
+  function phoneHTML(id,saved){var code="PH",num="";saved=String(saved||"").trim();
+    if(/^\+\d/.test(saved)){var dg=saved.slice(1).replace(/\D/g,""),best=null;CC.forEach(function(c){if(dg.indexOf(c[2])===0&&(!best||c[2].length>best[2].length))best=c});if(best){code=best[0];num=dg.slice(best[2].length)}}
+    var c=ccGet(code);
+    return'<div class="ph-wrap" id="'+id+'-w" data-cc="'+code+'"><button type="button" class="ph-cc" aria-haspopup="listbox" aria-label="Country code"><span class="ph-f">'+flag(code)+'</span><span class="ph-d">+'+c[2]+'</span><svg viewBox="0 0 10 6" width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></button><input id="'+id+'" type="tel" inputmode="tel" autocomplete="tel-national" placeholder="'+c[3]+'" value="'+applyMask(cleanDigits(num,c),c[3])+'"><ul class="ph-list hide" role="listbox">'+CC.map(function(x){return'<li role="option" data-c="'+x[0]+'">'+flag(x[0])+'<span class="ph-n">'+x[1]+'</span><span class="ph-d">+'+x[2]+'</span></li>'}).join("")+'</ul></div>'}
+  function phoneBind(id){var w=document.getElementById(id+"-w"),inp=document.getElementById(id);if(!w||!inp)return;var btn=w.querySelector(".ph-cc"),list=w.querySelector(".ph-list");
+    function ph(c){return c[0]==="PH"?"9XX XXX XXXX":c[3]}
+    function setC(code){var c=ccGet(code);w.dataset.cc=code;btn.querySelector(".ph-f").innerHTML=flag(code);btn.querySelector(".ph-d").textContent="+"+c[2];inp.placeholder=ph(c);inp.value=applyMask(cleanDigits(inp.value,c),c[3])}
+    setC(w.dataset.cc);
+    inp.addEventListener("input",function(){var c=ccGet(w.dataset.cc);inp.value=applyMask(cleanDigits(inp.value,c),c[3])});
+    btn.addEventListener("click",function(e){e.stopPropagation();list.classList.toggle("hide")});
+    list.addEventListener("click",function(e){var li=e.target.closest("li");if(!li)return;setC(li.dataset.c);list.classList.add("hide");inp.focus()});
+    document.addEventListener("click",function(e){if(!w.contains(e.target))list.classList.add("hide")})}
+  function phoneVal(id){var w=document.getElementById(id+"-w"),inp=document.getElementById(id);if(!w||!inp)return"";var c=ccGet(w.dataset.cc),d=inp.value.replace(/\D/g,"");if(!d)return"";if(d.length!==maskLen(c[3])||(c[5]&&d.charAt(0)!==c[5]))return null;return"+"+c[2]+" "+inp.value}
+  window.SOL={phoneHTML:phoneHTML,phoneBind:phoneBind,phoneVal:phoneVal,pwCheck:pwCheck,userCheck:userCheck,PWHINT:"8+ characters with an uppercase letter, lowercase letter, number and special character (! @ # $ % & *). No spaces.",esc:esc,peso:peso,bottle:bottle,link:link,toast:toast,contact:CONTACT,
     media:function(p,cls){return p.image_url?'<img src="'+esc(p.image_url)+'" alt="'+esc(p.name)+'" loading="lazy">':bottle(p.name)},
     theme:{get:get,set:function(t){try{localStorage.setItem(KEY,t)}catch(e){}apply(t)}}};
 
