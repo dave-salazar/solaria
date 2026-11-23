@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17181a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png"><link rel="stylesheet" href="solaria.css">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("sol-theme")||"dark")}catch(e){}</script>
+<title>Cart | Solaria Parfums</title><meta name="description" content="Solaria Parfums - luxury-inspired fragrances, made accessible. Delivered across the Philippines."><meta property="og:site_name" content="Solaria Parfums"><meta property="og:title" content="Cart | Solaria Parfums"></head>
+<body data-nav=""><div id="hdr"></div><main>
+<section class="page-head"><div class="wrap"><p class="eyebrow">Your selection</p><h1>Cart</h1></div></section>
+<section class="sec" style="padding-top:48px"><div class="wrap" id="cartroot"></div></section>
+<style>.cl{display:grid;grid-template-columns:84px 1fr auto;gap:20px;padding:20px 0;border-bottom:1px solid var(--line);align-items:center}
+.cl .t{width:84px;height:100px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;overflow:hidden}.cl .t svg{width:60%}.cl .t img{width:100%;height:100%;object-fit:cover}
+.cw{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:56px}.row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px}
+.qty{display:inline-flex;border:1px solid var(--line);align-items:center}.qty button{background:none;border:0;color:var(--text);width:32px;height:34px}.qty span{min-width:26px;text-align:center;font-size:13px}
+@media(max-width:860px){.cw{grid-template-columns:1fr;gap:36px}}</style>
+</main><div id="ftr"></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script><script src="db.js"></script><script src="cart.js"></script><script src="layout.js"></script><script>
+var root=document.getElementById("cartroot"),eligible=false,addrs=[],sel="new",user=null;
+async function refresh(){
+  // keep prices and availability honest: re-read the catalog
+  if(!SOLDB.ok)return;var a=SOLCart.get();if(!a.length)return;
+  try{var ps=await SOLDB.fetchProducts(),m={};ps.forEach(function(p){p.variants.forEach(function(v){m[v.id]={p:p,v:v}})});
+    var next=[];a.forEach(function(i){var h=m[i.vid];if(!h||h.v.stock<=0)return;i.price=+h.v.price;i.n=h.p.name;i.ml=h.v.ml;i.img=h.p.image_url||"";i.qty=Math.min(i.qty,h.v.stock);i.max=h.v.stock;next.push(i)});
+    if(next.length!==a.length)SOL.toast("Some items are no longer available");
+    SOLCart.replace(next)}catch(e){}
+}
+function sums(){var a=SOLCart.get(),sub=a.reduce(function(s,i){return s+i.price*i.qty},0),sh=a.length?SOLRules.shipping(sub):0,d=SOLRules.welcome(sub,eligible&&a.length);return{sub:sub,sh:sh,d:d,total:sub+sh-d}}
+function draw(done){
+  if(done){root.innerHTML='<div class="center" style="padding:40px 0"><p class="eyebrow">Thank you</p><h2>Order placed</h2><div class="rule"></div><p class="muted">Your order number is <b style="color:var(--gold)">'+SOL.esc(done.id)+'</b>.<br>Total to pay on delivery: <b>'+SOL.peso(done.total)+'</b>.</p><p class="muted">We will contact you to confirm your delivery.</p><div style="margin-top:30px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap"><a class="btn" href="orders.html">View my orders</a><a class="btn ghost" href="shop.html">Continue shopping</a></div></div>';return}
+  var a=SOLCart.get();
+  if(!a.length){root.innerHTML='<div class="center" style="padding:40px 0"><p class="muted">Your cart is empty.</p><a class="btn" href="shop.html" style="margin-top:20px">Explore the collection</a></div>';return}
+  var s=sums();
+  root.innerHTML='<div class="cw"><div>'+a.map(function(i,k){return '<div class="cl"><a class="t" href="product.html?id='+i.pid+'">'+(i.img?'<img src="'+SOL.esc(i.img)+'" alt="">':SOL.bottle(i.n))+'</a><div><div style="font-family:var(--serif);font-size:21px">'+SOL.esc(i.n)+'</div><div class="muted" style="font-size:12px">'+i.ml+' ml &middot; '+SOL.peso(i.price)+'</div><div style="margin-top:10px;display:flex;gap:16px;align-items:center"><div class="qty"><button data-m="'+k+'">&minus;</button><span>'+i.qty+'</span><button data-p="'+k+'">+</button></div><button class="muted" style="background:none;border:0;font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-decoration:underline" data-r="'+k+'">Remove</button></div></div><div style="color:var(--gold)">'+SOL.peso(i.price*i.qty)+'</div></div>'}).join("")+'</div>'+
+   '<div><div class="panel"><h3>Summary</h3><div class="rule"></div><div class="row"><span class="muted">Subtotal</span><span>'+SOL.peso(s.sub)+'</span></div><div class="row"><span class="muted">Shipping</span><span>'+(s.sh?SOL.peso(s.sh):"Free")+'</span></div>'+(s.d?'<div class="row"><span class="muted">Welcome gift</span><span>&minus;'+SOL.peso(s.d)+'</span></div>':'')+'<div class="row" style="border-top:1px solid var(--line);margin-top:10px;padding-top:14px;font-size:16px"><span>Total</span><span style="color:var(--gold)">'+SOL.peso(s.total)+'</span></div>'+
+   '<h3 style="margin-top:30px">Delivery</h3><div class="rule"></div>'+(user?
+     (addrs.length?'<label>Saved address</label><select id="as">'+addrs.map(function(x){return '<option value="'+x.id+'"'+(sel===x.id?' selected':'')+'>'+SOL.esc((x.label||x.full_name)+' - '+x.city)+'</option>'}).join("")+'<option value="new"'+(sel==="new"?' selected':'')+'>Use a new address</option></select>':'')+
+     '<div id="nf" class="'+(sel==="new"?'':'hide')+'"><label>Full name</label><input id="fn" type="text" autocomplete="name"><label>Mobile number</label><input id="fp" type="tel" autocomplete="tel"><label>Street address</label><input id="fa" type="text" autocomplete="street-address"><label>City</label><input id="fc" type="text"><label>Province</label><input id="fv" type="text"><label>Postal code</label><input id="fz" type="text"></div>'
+   :'<p class="muted" style="font-size:13px">Please <a href="login.html?next=cart.html" style="color:var(--gold);text-decoration:underline">sign in</a> to place your order.</p>')+
+   '<h3 style="margin-top:30px">Payment</h3><div class="rule"></div><p style="margin:0;font-size:13px">Cash on delivery</p><p class="muted" style="font-size:12px;margin:4px 0 0">GCash and Maya are coming soon.</p><div class="err" id="ce"></div>'+
+   '<button class="btn block" id="go" style="margin-top:14px">'+(user?'Place order':'Sign in to continue')+'</button></div></div></div>';
+  root.querySelectorAll("[data-m]").forEach(function(b){b.onclick=function(){SOLCart.setQty(+b.dataset.m,SOLCart.get()[+b.dataset.m].qty-1);draw()}});
+  root.querySelectorAll("[data-p]").forEach(function(b){b.onclick=function(){var i=SOLCart.get()[+b.dataset.p];SOLCart.setQty(+b.dataset.p,Math.min(i.max||10,i.qty+1));draw()}});
+  root.querySelectorAll("[data-r]").forEach(function(b){b.onclick=function(){SOLCart.remove(+b.dataset.r);draw()}});
+  var as=document.getElementById("as");if(as)as.onchange=function(){sel=as.value;draw()};
+  document.getElementById("go").onclick=place;
+}
+function val(i){return(document.getElementById(i)||{}).value||""}
+async function place(){
+  var e=document.getElementById("ce");e.textContent="";
+  if(!user){location.href="login.html?next=cart.html";return}
+  var c;
+  if(sel!=="new"){var x=addrs.filter(function(y){return y.id===sel})[0];c={name:x.full_name,phone:x.phone,address_line:x.address_line,city:x.city,province:x.province,postal_code:x.postal_code}}
+  else{c={name:val("fn"),phone:val("fp"),address_line:val("fa"),city:val("fc"),province:val("fv"),postal_code:val("fz")};
+    if(!c.name||!c.phone||!c.address_line||!c.city||!c.province){e.textContent="Please complete your delivery details.";return}}
+  var b=document.getElementById("go");b.disabled=true;b.textContent="Placing order...";
+  try{var r=await SOLDB.place(SOLCart.get(),"cod",c);
+    if(sel==="new"&&document.getElementById("fa")){try{await SOLDB.saveAddress({label:"Home",full_name:c.name,phone:c.phone,address_line:c.address_line,city:c.city,province:c.province,postal_code:c.postal_code})}catch(x){}}
+    SOLCart.clear();draw(r)}
+  catch(x){var m=String(x.message||x),t="Something went wrong. Please try again.";
+    if(m.indexOf("OUT_OF_STOCK")>-1)t="Sorry, "+(m.split("OUT_OF_STOCK:")[1]||"an item")+" is no longer available in that quantity.";
+    else if(m.indexOf("BAD_PHONE")>-1)t="Please enter a valid mobile number.";
+    else if(m.indexOf("TOO_MANY_PENDING")>-1)t="You have several pending orders. Please wait for them to be processed.";
+    else if(m.indexOf("ADDRESS_REQUIRED")>-1)t="Please complete your delivery details.";
+    e.textContent=t;b.disabled=false;b.textContent="Place order";await refresh();}
+}
+(async function(){
+  if(SOLDB.ok){var s=await SOLDB.session();user=s?s.user:null;
+    if(user){try{addrs=await SOLDB.listAddresses();if(addrs.length)sel=addrs[0].id;eligible=await SOLDB.welcomeEligible()}catch(e){}}}
+  await refresh();draw();
+})();
+</script></body></html>
