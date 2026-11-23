@@ -73,8 +73,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .chips{display:flex;gap:10px;flex-wrap:wrap}
 .chip{--chip-r:999px;border:1px solid var(--line);border-radius:var(--chip-r);background:transparent;color:var(--muted);padding:9px 20px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;transition:border-color .25s,color .25s,background .25s,transform .25s,box-shadow .25s}
 .chip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
-@media (hover:hover){.chip:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent);transform:translateY(-2px);box-shadow:0 6px 16px color-mix(in srgb,var(--gold) 18%,transparent)}
-.chip.on:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}}
+@media (hover:hover){.chip:hover{border-color:var(--gold);color:var(--ink);background:var(--gold);transform:translateY(-2px);box-shadow:0 6px 16px color-mix(in srgb,var(--gold) 28%,transparent)}
+.chip.on:hover{background:var(--gold2);border-color:var(--gold2)}}
 .chip:active{transform:translateY(0) scale(.96);box-shadow:none}
 .chip:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
 table{width:100%;border-collapse:collapse;font-size:13px}
