@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17181a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png"><link rel="stylesheet" href="solaria.css">
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("sol-theme")||"dark")}catch(e){}</script>
+<title>Fragrance | Solaria Parfums</title><meta name="description" content="Solaria Parfums - luxury-inspired fragrances, made accessible. Delivered across the Philippines."><meta property="og:site_name" content="Solaria Parfums"><meta property="og:title" content="Fragrance | Solaria Parfums"></head>
+<body data-nav="shop"><div id="hdr"></div><main>
+<section class="sec" style="padding-top:48px"><div class="wrap">
+<p class="muted" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:0 0 28px"><a href="shop.html">Shop</a> &nbsp;/&nbsp; <span id="crumb"></span></p>
+<div id="pd" style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px"></div>
+<div id="rev" style="margin-top:96px;max-width:760px"></div>
+</div></section>
+<style>@media(max-width:860px){#pd{grid-template-columns:1fr!important;gap:32px!important}}
+.sz{display:flex;gap:10px;flex-wrap:wrap}.sz button{min-width:84px}.sz button[disabled]{opacity:.35;text-decoration:line-through}
+.notes{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);margin:28px 0}
+.notes div{padding:16px;border-right:1px solid var(--line)}.notes div:last-child{border:0}
+.notes b{display:block;font:500 9px var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.qty{display:inline-flex;border:1px solid var(--line);align-items:center}.qty button{background:none;border:0;color:var(--text);width:40px;height:44px;font-size:16px}.qty span{min-width:30px;text-align:center}
+.star{color:var(--gold)}.rv{border-top:1px solid var(--line);padding:20px 0}</style>
+</main><div id="ftr"></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4"></script><script src="db.js"></script><script src="cart.js"></script><script src="layout.js"></script><script>
+var id=new URLSearchParams(location.search).get("id"),P=null,sel=null,qty=1,R={};
+var root=document.getElementById("pd");
+function stars(n){var s="";for(var i=1;i<=5;i++)s+=i<=Math.round(n)?"\u2605":"\u2606";return s}
+function draw(){
+  var v=P.variants.filter(function(x){return String(x.id)===String(sel)})[0]||P.variants[0];
+  var out=!v||v.stock<=0,low=v&&v.stock>0&&v.stock<=5,r=R;
+  root.innerHTML='<div class="pc"><div class="ph" style="aspect-ratio:1/1.1">'+SOL.media(P)+'</div></div><div>'+
+   '<p class="eyebrow">'+SOL.esc(P.concentration||"Eau de Parfum")+' &middot; '+SOL.esc(P.shop_for||"")+'</p>'+
+   '<h1>'+SOL.esc(P.name)+'</h1>'+(P.inspired_by?'<p class="muted" style="margin:10px 0 0;font-size:15px">Inspired by <b style="color:var(--text);font-weight:500">'+SOL.esc(P.inspired_by)+'</b></p>':'')+
+   (r.n?'<p style="margin:12px 0 0"><span class="star">'+stars(r.avg)+'</span> <span class="muted" style="font-size:12px">'+r.avg+' ('+r.n+')</span></p>':'')+
+   '<div class="rule"></div><p style="font-family:var(--serif);font-size:30px;margin:0;color:var(--gold)">'+(v?SOL.peso(v.price):"")+'</p>'+
+   (P.family?'<p class="muted" style="margin:6px 0 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase">'+SOL.esc(P.family)+'</p>':'')+
+   '<label>Size</label><div class="sz">'+P.variants.map(function(x){return '<button class="chip'+(String(x.id)===String(v&&v.id)?' on':'')+'" data-id="'+x.id+'"'+(x.stock<=0?' disabled':'')+'>'+x.ml+' ml</button>'}).join("")+'</div>'+
+   (P.description?'<p class="muted" style="margin:26px 0 0">'+SOL.esc(P.description)+'</p>':'')+
+   ((P.top_notes||P.heart_notes||P.base_notes)?'<div class="notes"><div><b>Top</b>'+SOL.esc(P.top_notes||"-")+'</div><div><b>Heart</b>'+SOL.esc(P.heart_notes||"-")+'</div><div><b>Base</b>'+SOL.esc(P.base_notes||"-")+'</div></div>':'<div style="height:24px"></div>')+
+   (out?'<button class="btn block ghost" id="nt">Notify me when available</button><p class="muted" style="font-size:12px;text-align:center;margin-top:10px" id="ntm"></p>':
+    '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div class="qty"><button id="mn" aria-label="Less">&minus;</button><span>'+qty+'</span><button id="pl" aria-label="More">+</button></div><button class="btn" id="add" style="flex:1;min-width:180px">Add to cart</button></div>'+
+    (low?'<p class="muted" style="font-size:12px;margin:12px 0 0">Only '+v.stock+' left in this size.</p>':'')+
+    '<p class="muted" style="font-size:12px;margin:12px 0 0">Cash on delivery available &middot; Free shipping over '+SOL.peso(SOLRules.FREE_OVER)+'</p>');
+  root.querySelectorAll(".sz button").forEach(function(b){b.onclick=function(){sel=b.dataset.id;qty=1;draw()}});
+  var mn=document.getElementById("mn"),pl=document.getElementById("pl");
+  if(mn){mn.onclick=function(){qty=Math.max(1,qty-1);draw()};pl.onclick=function(){qty=Math.min(10,v.stock,qty+1);draw()};
+   document.getElementById("add").onclick=function(){SOLCart.add({vid:v.id,pid:P.id,n:P.name,ml:v.ml,price:+v.price,img:P.image_url||"",qty:qty});SOL.toast(P.name+" ("+v.ml+" ml) added to cart")}}
+  var nt=document.getElementById("nt");
+  if(nt)nt.onclick=async function(){try{if(!(await SOLDB.requireLogin(location.pathname.split("/").pop()+location.search)))return;await SOLDB.notify(P.id);document.getElementById("ntm").textContent="We will email you when it is back."}catch(e){SOL.toast("Could not save your request")}};
+}
+async function reviews(){
+  var box=document.getElementById("rev"),rows=[];
+  try{rows=await SOLDB.reviews(P.id)}catch(e){}
+  var can=false;try{can=(await SOLDB.session())&&await SOLDB.canReview(P.id)}catch(e){}
+  box.innerHTML='<p class="eyebrow">Reviews</p><h2>What customers say</h2><div class="rule"></div>'+
+   (rows.length?rows.map(function(r){return '<div class="rv"><span class="star">'+stars(r.rating)+'</span> <span class="muted" style="font-size:12px">&nbsp;'+SOL.esc(r.public_name||"Anonymous")+' &middot; '+new Date(r.created_at).toLocaleDateString()+'</span><p style="margin:8px 0 0" class="muted">'+SOL.esc(r.comment)+'</p></div>'}).join(""):'<p class="muted">No reviews yet.</p>')+
+   (can?'<div class="panel" style="margin-top:28px"><h3>Write a review</h3><label>Rating</label><select id="rt"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select><label>Your name (optional)</label><input id="rn" type="text" maxlength="40"><label>Review</label><textarea id="rc" maxlength="1000"></textarea><div class="err" id="re"></div><button class="btn sm" id="rs">Submit review</button></div>':'<p class="muted" style="font-size:12px;margin-top:20px">Only customers with a delivered order can review this fragrance.</p>');
+  var rs=document.getElementById("rs");
+  if(rs)rs.onclick=async function(){try{await SOLDB.submitReview(P.id,+document.getElementById("rt").value,document.getElementById("rc").value,document.getElementById("rn").value);SOL.toast("Thank you for your review");R=(await SOLDB.fetchRatings())[String(P.id)]||{};draw();reviews()}catch(e){document.getElementById("re").textContent="Could not submit your review. Please check the text and try again."}};
+}
+async function load(){
+  if(!SOLDB.ok||!id){root.innerHTML='<p class="muted">Fragrance not found. <a href="shop.html" style="color:var(--gold)">Back to shop</a></p>';return}
+  try{P=await SOLDB.fetchProduct(id)}catch(e){P=null}
+  if(!P){root.innerHTML='<p class="muted">Fragrance not found. <a href="shop.html" style="color:var(--gold)">Back to shop</a></p>';return}
+  document.title=P.name+" | Solaria Parfums";document.getElementById("crumb").textContent=P.name;
+  if(!sel||!P.variants.some(function(x){return String(x.id)===String(sel)})){var f=P.variants.filter(function(x){return x.stock>0})[0]||P.variants[0];sel=f&&f.id}
+  R=(await SOLDB.fetchRatings())[String(P.id)]||{};draw();reviews();
+}
+load();SOLDB.watch&&SOLDB.watch(load,["product_variants"]);
+</script></body></html>
