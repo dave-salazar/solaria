@@ -71,9 +71,12 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,te
 .page-head{padding:72px 0 36px;text-align:center;border-bottom:1px solid var(--line)}
 .panel{border:1px solid var(--line);background:var(--card);padding:28px}
 .chips{display:flex;gap:10px;flex-wrap:wrap}
-.chip{border:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 16px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;transition:.2s}
-.chip:hover,.chip.on{border-color:var(--gold);color:var(--gold)}
-.chip.on{background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.chip{--chip-r:999px;border:1px solid var(--line);border-radius:var(--chip-r);background:transparent;color:var(--muted);padding:9px 20px;font-size:10px;letter-spacing:.18em;text-transform:uppercase;transition:border-color .25s,color .25s,background .25s,transform .25s,box-shadow .25s}
+.chip.on{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,transparent)}
+@media (hover:hover){.chip:hover{border-color:var(--gold);color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent);transform:translateY(-2px);box-shadow:0 6px 16px color-mix(in srgb,var(--gold) 18%,transparent)}
+.chip.on:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}}
+.chip:active{transform:translateY(0) scale(.96);box-shadow:none}
+.chip:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{font:500 10px var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
 td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
