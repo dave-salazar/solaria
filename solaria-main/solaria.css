@@ -114,3 +114,7 @@ td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
 .ph-list li{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;font-size:13px}
 .ph-list li:hover{background:var(--bg2)}
 .ph-n{flex:1}.ph-list .ph-d{color:var(--muted)}
+
+/* section title divider inside panels: long gold line with a diamond, fading out */
+.panel .rule{width:100%;height:1px;margin:20px 0 28px;position:relative;background:linear-gradient(90deg,var(--gold),transparent)}
+.panel .rule::before{content:"";position:absolute;left:0;top:50%;width:7px;height:7px;background:var(--gold);transform:translateY(-50%) rotate(45deg);box-shadow:0 0 0 3px var(--card)}
