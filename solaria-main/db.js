@@ -58,6 +58,7 @@
       return ck(await client.rpc("place_order",{p_items:items.map(function(x){return{variant_id:x.vid,n:x.n,qty:x.qty||1}}),p_payment:method,p_customer:customer||{}}));
     },
     cancel:async function(id){ck(await client.rpc("cancel_order",{p_id:id}))},
+    received:async function(id){ck(await client.rpc("confirm_received",{p_id:id}))},
     myOrders:async function(){return ck(await client.from("orders").select("*, order_items(*)").order("created_at",{ascending:false}))||[]},
     welcomeEligible:async function(){
       var s=await this.session();if(!s)return false;
