@@ -62,7 +62,8 @@ async function load(){
   if(!P){root.innerHTML='<p class="muted">Fragrance not found. <a href="shop.html" style="color:var(--gold)">Back to shop</a></p>';return}
   document.title=P.name+" | Solaria Parfums";document.getElementById("crumb").textContent=P.name;
   if(!sel||!P.variants.some(function(x){return String(x.id)===String(sel)})){var f=P.variants.filter(function(x){return x.stock>0})[0]||P.variants[0];sel=f&&f.id}
-  R=(await SOLDB.fetchRatings())[String(P.id)]||{};draw();reviews();
+  R=(await SOLDB.fetchRatings())[String(P.id)]||{};draw();await reviews();
+  if(location.hash==="#rev"&&!window.__scrolled){window.__scrolled=1;var rv=document.getElementById("rev");if(rv)rv.scrollIntoView({behavior:"smooth"})}
 }
 load();SOLDB.watch&&SOLDB.watch(load,["product_variants"]);
 </script></body></html>
