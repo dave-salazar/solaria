@@ -83,6 +83,11 @@
 
     // ---- reviews / alerts / contact ----
     reviews:async function(pid){return ck(await client.from("reviews").select("*").eq("product_id",String(pid)).order("created_at",{ascending:false}))||[]},
+    myReviewedIds:async function(){
+      var s=await this.session();if(!s)return [];
+      var r=await client.from("reviews").select("product_id").eq("user_id",s.user.id);
+      return r.error?[]:(r.data||[]).map(function(x){return String(x.product_id)});
+    },
     canReview:async function(pid){
       var r=await client.from("order_items").select("order_id, orders!inner(status)").eq("product_id",String(pid)).eq("orders.status","delivered").limit(1);
       return !r.error&&(r.data||[]).length>0;
