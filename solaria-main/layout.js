@@ -63,7 +63,7 @@
     if(h)h.innerHTML='<div class="promo">Complimentary shipping on orders over \u20B12,500</div>'+
       '<header class="top"><div class="in"><a class="brand" href="index.html" aria-label="Solaria home"><img src="logo-emblem.png" alt=""><span>SOLARIA</span></a>'+
       '<nav class="main" id="nav">'+a("shop.html","Shop","shop")+a("about.html","Our story","about")+a("contact.html","Contact","contact")+'</nav>'+
-      '<div class="tools"><button id="menu" aria-label="Menu">Menu</button><a href="login.html" id="acct"><span class="lbl">Account</span></a>'+
+      '<div class="tools"><button id="menu" aria-label="Menu">Menu</button><a href="orders.html" id="ord"><span class="lbl">My orders</span></a><a href="login.html" id="acct"><span class="lbl">Account</span></a>'+
       '<a class="cartlnk" href="cart.html" aria-label="Cart"><span class="lbl">Cart</span><span class="cn hide">0</span></a></div></div></header>';
     var f=document.getElementById("ftr");
     if(f)f.innerHTML='<footer class="foot"><div class="wrap"><div class="cols"><div><img class="logo-img" src="logo-full.png" alt="Solaria Parfums"><p class="muted" style="max-width:280px;font-size:13px;margin:0">Luxury-inspired fragrances, made accessible. Crafted to feel unmistakably yours.</p></div>'+
