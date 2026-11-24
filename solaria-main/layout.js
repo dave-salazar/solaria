@@ -3,7 +3,7 @@
 (function(){
   var KEY="sol-theme";
   function apply(t){document.documentElement.setAttribute("data-theme",t);document.documentElement.style.colorScheme=t}
-  function get(){try{return localStorage.getItem(KEY)||"dark"}catch(e){return"dark"}}
+  function get(){return"dark"}
   apply(get());
   var CONTACT={email:"solariasupport@gmail.com",social:"solaria"};
   function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]})}
@@ -64,15 +64,13 @@
       '<header class="top"><div class="in"><a class="brand" href="index.html" aria-label="Solaria home"><img src="logo-emblem.png" alt=""><span>SOLARIA</span></a>'+
       '<nav class="main" id="nav">'+a("shop.html","Shop","shop")+a("about.html","Our story","about")+a("contact.html","Contact","contact")+'</nav>'+
       '<div class="tools"><button id="menu" aria-label="Menu">Menu</button><a href="login.html" id="acct"><span class="lbl">Account</span></a>'+
-      '<a class="cartlnk" href="cart.html" aria-label="Cart"><span class="lbl">Cart</span><span class="cn hide">0</span></a>'+
-      '<button id="tg" aria-label="Toggle light or dark"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="8" cy="8" r="6.5"/><path d="M8 1.5v13A6.5 6.5 0 0 1 8 1.5z" fill="currentColor"/></svg></button></div></div></header>';
+      '<a class="cartlnk" href="cart.html" aria-label="Cart"><span class="lbl">Cart</span><span class="cn hide">0</span></a></div></div></header>';
     var f=document.getElementById("ftr");
     if(f)f.innerHTML='<footer class="foot"><div class="wrap"><div class="cols"><div><img class="logo-img" src="logo-full.png" alt="Solaria Parfums"><p class="muted" style="max-width:280px;font-size:13px;margin:0">Luxury-inspired fragrances, made accessible. Crafted to feel unmistakably yours.</p></div>'+
       '<div><h4>Help</h4><a href="shipping-returns.html">Shipping &amp; returns</a><a href="orders.html">My orders</a><a href="contact.html">Contact us</a></div>'+
       '<div><h4>Connect</h4><a href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a><a href="#" onclick="return false">@'+CONTACT.social+'</a></div></div>'+
       '<div class="fine"><span>&copy; '+new Date().getFullYear()+' Solaria Parfums. All rights reserved.</span><span><a style="display:inline;margin-right:16px" href="privacy.html">Privacy</a><a style="display:inline;margin-right:16px" href="terms.html">Terms</a><a style="display:inline" href="admin-login.html">Admin login</a></span></div></div></footer>';
     var m=document.getElementById("menu");if(m)m.onclick=function(){document.getElementById("nav").classList.toggle("open")};
-    var tg=document.getElementById("tg");if(tg)tg.onclick=function(){SOL.theme.set(get()==="dark"?"light":"dark")};
     // show "Account" label as the logged-in link target
     if(window.SOLDB&&SOLDB.ok)SOLDB.session().then(function(s){if(s){var el=document.getElementById("acct");if(el)el.setAttribute("href","account.html")}}).catch(function(){});
     if(window.SOLCart)SOLCart.paint();
