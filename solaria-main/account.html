@@ -112,7 +112,7 @@ function pw(id){return '<div class="pw-wrap"><input id="'+id+'" type="password" 
   document.getElementById("ps").onclick=async function(){var ph=SOL.phoneVal("pp");if(ph===null){document.getElementById("pe").textContent="Enter a valid mobile number for the selected country.";return}document.getElementById("pe").textContent="";try{await SOLDB.updateProfile({full_name:document.getElementById("pn").value,phone:ph});md.full_name=document.getElementById("pn").value;md.phone=ph;SOL.toast("Profile saved")}catch(e){document.getElementById("pe").textContent="Could not save."}};
   ar.querySelectorAll(".pw-eye").forEach(function(b){b.onclick=function(){var i=b.parentNode.querySelector("input"),show=i.type==="password";i.type=show?"text":"password";b.classList.toggle("on",show);b.setAttribute("aria-pressed",show);b.setAttribute("aria-label",show?"Hide password":"Show password")}});
   ar.querySelectorAll(".pw-wrap input").forEach(function(i){i.addEventListener("input",function(){if(!i.value){var b=i.parentNode.querySelector(".pw-eye");i.type="password";b.classList.remove("on");b.setAttribute("aria-pressed","false");b.setAttribute("aria-label","Show password")}})});
-  document.getElementById("so").onclick=async function(){await SOLDB.signOut();location.href="index.html"};
+  document.getElementById("so").onclick=async function(){if(!confirm("Are you sure you want to sign out?"))return;await SOLDB.signOut();location.href="index.html"};
   document.getElementById("an").onclick=function(){form({})};
   list();
 })();
